@@ -21,8 +21,8 @@
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{76bbac8d-d679-46c7-9419-cca874758b36}</ProjectGuid>
-    <RootNamespace>TCPWithMySQLServer</RootNamespace>
+    <ProjectGuid>{c394c1a6-a103-4cda-a711-185b8f0296be}</ProjectGuid>
+    <RootNamespace>TCPWithMySQLClient</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
