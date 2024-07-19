@@ -7,8 +7,6 @@
 #include <WinSock2.h>
 #include <WS2tcpip.h>
 
-#include "SQLConnector.h"
-
 #include "../../Socket_err.h"
 
 #pragma comment(lib, "ws2_32")
@@ -18,12 +16,59 @@ using namespace std;
 #define SERVERPORT 17325
 #define BUFSIZE 512
 
+int _Recv_ahead(SOCKET s, char* p)
+{
+	__declspec(thread) static int nbytes = 0;
+	__declspec(thread) static char buf[1024];
+	__declspec(thread) static char* ptr;
+	
+	if (nbytes == 0 || nbytes == SOCKET_ERROR)
+	{
+		nbytes = recv(s, buf, sizeof(buf), 0);
+		if (nbytes == SOCKET_ERROR)
+		{
+			return SOCKET_ERROR;
+		}
+		else if (nbytes == 0) return 0;
+
+		ptr = buf;
+	}
+
+	--nbytes;
+	*p = *ptr++;
+	return 1;
+}
+
+int Recvline(SOCKET s, char* buf, int maxlen)
+{
+	int n, nbytes;
+	char c, * ptr = buf;
+
+	for (n = 1; n < maxlen; n++)
+	{
+		nbytes = _Recv_ahead(s, &c);
+		if (nbytes == 1)
+		{
+			*ptr++ = c;
+			if (c == '\n')
+			{
+				break;
+			}
+		}
+		else if (nbytes == 0)
+		{
+			*ptr = 0;
+			return n - 1;
+		}
+		else return SOCKET_ERROR;
+	}
+
+	*ptr = 0;
+	return n;
+}
+
 int main()
 {
-	SQLConnector SQL;
-
-	SQL.CheckConnect();
-
 	int Retval;
 
 	WSADATA wsa;
@@ -70,7 +115,9 @@ int main()
 		while (1)
 		{
 
-			Retval = recv(ClientSocket, Buf, BUFSIZE, 0);
+			//Retval = recv(ClientSocket, Buf, BUFSIZE, 0);
+			Retval = Recvline(ClientSocket, Buf, BUFSIZE + 1);
+			
 			if (Retval == SOCKET_ERROR)
 			{
 				err_display("recv()");

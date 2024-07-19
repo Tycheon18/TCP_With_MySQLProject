@@ -4,3 +4,12 @@ TCPWithMySQLServer/
 TCPWithMySQLClient/x64/Debug/
 TCPWithMySQLClient/TCPWithMySQLClient/x64/
 TCPWithMySQLClient/TCPWithMySQLClient/TCPWithMySQLClient.vcxproj.user
+.vs/
+TCPWithMySQLClient_Fixed/TCPWithMySQLClient_Fixed/x64/
+TCPWithMySQLServer_Variable/TCPWithMySQLServer_Variable/x64/
+TCPWithMySQLClient_Fixed/x64/
+TCPWithMySQLClient_Variable/TCPWithMySQLClient_Variable/x64/
+TCPWithMySQLClient_Variable/x64/
+TCPWithMySQLServer_Fixed/TCPWithMySQLServer_Fixed/x64/
+TCPWithMySQLServer_Fixed/x64/
+TCPWithMySQLServer_Variable/x64/

@@ -21,8 +21,8 @@
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{76bbac8d-d679-46c7-9419-cca874758b36}</ProjectGuid>
-    <RootNamespace>TCPWithMySQLServer</RootNamespace>
+    <ProjectGuid>{54a5c2d6-c0ac-4a62-8240-95554a75c7b2}</ProjectGuid>
+    <RootNamespace>TCPWithMySQLClientVariable</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -70,10 +70,6 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>C:\Program Files\MySQL\MySQL Server 8.0\include;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\Program Files\MySQL\MySQL Server 8.0\lib;$(LibraryPath)</LibraryPath>
-  </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
@@ -133,11 +129,9 @@
   <ItemGroup>
     <ClCompile Include="..\..\Socket_err.cpp" />
     <ClCompile Include="Main.cpp" />
-    <ClCompile Include="SQLConnector.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\Socket_err.h" />
-    <ClInclude Include="SQLConnector.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

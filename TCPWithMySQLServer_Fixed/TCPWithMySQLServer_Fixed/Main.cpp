@@ -7,8 +7,6 @@
 #include <WinSock2.h>
 #include <WS2tcpip.h>
 
-#include "SQLConnector.h"
-
 #include "../../Socket_err.h"
 
 #pragma comment(lib, "ws2_32")
@@ -16,14 +14,10 @@
 using namespace std;
 
 #define SERVERPORT 17325
-#define BUFSIZE 512
+#define BUFSIZE 50
 
 int main()
 {
-	SQLConnector SQL;
-
-	SQL.CheckConnect();
-
 	int Retval;
 
 	WSADATA wsa;
@@ -70,7 +64,7 @@ int main()
 		while (1)
 		{
 
-			Retval = recv(ClientSocket, Buf, BUFSIZE, 0);
+			Retval = recv(ClientSocket, Buf, BUFSIZE, MSG_WAITALL);
 			if (Retval == SOCKET_ERROR)
 			{
 				err_display("recv()");
