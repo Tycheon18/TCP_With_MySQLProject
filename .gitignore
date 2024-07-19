@@ -1,6 +1,5 @@
 TCPWithMySQLClient/.vs/TCPWithMySQLClient/FileContentIndex/189b9a43-f6bb-42ac-ad8b-68e4a90f960b.vsidx
 TCPWithMySQLClient/.vs/
-TCPWithMySQLServer/
 TCPWithMySQLClient/x64/Debug/
 TCPWithMySQLClient/TCPWithMySQLClient/x64/
 TCPWithMySQLClient/TCPWithMySQLClient/TCPWithMySQLClient.vcxproj.user
@@ -13,3 +12,5 @@ TCPWithMySQLClient_Variable/x64/
 TCPWithMySQLServer_Fixed/TCPWithMySQLServer_Fixed/x64/
 TCPWithMySQLServer_Fixed/x64/
 TCPWithMySQLServer_Variable/x64/
+TCPWithMySQLServer/TCPWithMySQLServer/x64/
+TCPWithMySQLServer/x64/
