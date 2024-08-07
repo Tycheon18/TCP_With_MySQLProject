@@ -34,6 +34,10 @@ ATCPConnector::ATCPConnector()
 	ClientSocket = nullptr;
 	UnrealThread = nullptr;
 
+	JsonData.Name = "";
+	JsonData.Description = "";
+	JsonData.Color = "";
+	JsonData.Number = -1;
 }
 
 // Called when the game starts or when spawned
@@ -41,14 +45,14 @@ void ATCPConnector::BeginPlay()
 {
 	Super::BeginPlay();
 
-	//if (ConnectServer())
-	//{
+	if (ConnectServer())
+	{
+		SendText();
+	}
+	else
+	{
 
-	//}
-	//else
-	//{
-
-	//}
+	}
 	
 }
 
@@ -78,20 +82,74 @@ bool ATCPConnector::ConnectServer()
 
 void ATCPConnector::SendText()
 {
-	char* ClientText = new char[512];
-	ClientText = TCHAR_TO_UTF8(*Text);
-
-	uint8_t Buffer[512];
-	memset(Buffer, '\0', std::size(Buffer));
-
-	for (int i = 0; i < strlen(ClientText); ++i)
+	//TChar* ClientText = new char[512];
+	//Text = "Umjunsik is Alive";
+	//ClientText = TCHAR_TO_UTF8(*Text);
+	if(Text != "")
 	{
-		Buffer[i] = ClientText[i];
+		FString Serial = "C" + Text;
+
+		TCHAR* SerializedText = Serial.GetCharArray().GetData();
+
+		//uint8 Buffer[512];
+		//memset(Buffer, '\0', std::size(Buffer));
+
+		//for (int i = 0; i < strlen(ClientText); ++i)
+		//{
+		//	Buffer[i] = ClientText[i];
+		//}
+
+		int32 Size = FCString::Strlen(SerializedText);
+
+		int32 BytesSent = 0;
+
+		ClientSocket->Send((uint8*)TCHAR_TO_UTF8(SerializedText), Size, BytesSent);
+	}
+}
+
+void ATCPConnector::SendDataText()
+{
+	CreateDataText();
+
+	if (DataText != "")
+	{
+		FString Serial = "Q" + DataText;
+
+		TCHAR* SerializedText = Serial.GetCharArray().GetData();
+
+		int32 Size = FCString::Strlen(SerializedText);
+
+		int32 BytesSent = 0;
+
+		ClientSocket->Send((uint8*)TCHAR_TO_UTF8(SerializedText), Size, BytesSent);
+	}
+}
+
+void ATCPConnector::SendPacket()
+{
+	TSharedPtr<FBufferArchive> Packet = CreatePacket(0, TEXT("start packet"));
+
+	//AsyncTask(ENamedThreads::AnyThread, [this, Packet]()
+	//	{
+	//		if (ClientSocket == nullptr || this == nullptr)
+	//		{
+	//			return;
+	//		}
+
+			int32 NumSend;
+			bool bSuccess = ClientSocket->Send(Packet->GetData(), Packet->Num(), NumSend);
+//		});
+}
+
+void ATCPConnector::CreateDataText()
+{
+	if ((JsonData.Name == "") || (JsonData.Description == "") || (JsonData.Color == "") ||
+		(JsonData.Number == -1))
+	{
+		return;
 	}
 
-	int32 BytesSent = 0;
-
-	ClientSocket->Send(Buffer, std::size(Buffer), BytesSent);
+	DataText = JsonData.Name + ',' + JsonData.Description + ',' + JsonData.Color + ',' + FString::FromInt(JsonData.Number);
 }
 
 TSharedPtr<FBufferArchive> ATCPConnector::CreatePacket(int32 InType, const uint8* InPayload, int32 InPayloadSize)

@@ -94,31 +94,10 @@ int main()
 	int AddrLen;
 	HANDLE hThread;
 
-	while (1)
-	{
-		AddrLen = sizeof(ClientSockAddr);
-		ClientSocket = accept(ServerSocket, (struct sockaddr*)&ClientSockAddr, &AddrLen);
-		if (ClientSocket == INVALID_SOCKET)
-		{
-			err_display("accept()");
-			break;
-		}
-
-		char Addr[INET_ADDRSTRLEN];
-		inet_ntop(AF_INET, &ClientSockAddr.sin_addr, Addr, sizeof(Addr));
-		printf("\n[TCP 서버] 클라이언트 접속: IP 주소=%s , 포트 번호=%d\n", Addr, ntohs(ClientSockAddr.sin_port));
-
-		hThread = CreateThread(NULL, 0, ProcessClient, (LPVOID)ClientSocket, 0, NULL);
-		if (hThread == NULL) { closesocket(ClientSocket); }
-		else { CloseHandle(hThread); }
-	}
-
-	//char Buf[BUFSIZE + 1];
-
 	//while (1)
 	//{
 	//	AddrLen = sizeof(ClientSockAddr);
-	//	ClientSocket = accept(ServerSocket, (SOCKADDR*)&ClientSockAddr, &AddrLen);
+	//	ClientSocket = accept(ServerSocket, (struct sockaddr*)&ClientSockAddr, &AddrLen);
 	//	if (ClientSocket == INVALID_SOCKET)
 	//	{
 	//		err_display("accept()");
@@ -127,36 +106,57 @@ int main()
 
 	//	char Addr[INET_ADDRSTRLEN];
 	//	inet_ntop(AF_INET, &ClientSockAddr.sin_addr, Addr, sizeof(Addr));
-	//	printf("\n[TCP 서버] 클라이언트 접속: IP 주소 = %s, 포트 번호 = %d\n", Addr, ntohs(ClientSockAddr.sin_port));
+	//	printf("\n[TCP 서버] 클라이언트 접속: IP 주소=%s , 포트 번호=%d\n", Addr, ntohs(ClientSockAddr.sin_port));
 
-	//	while (1)
-	//	{
-
-	//		Retval = recv(ClientSocket, Buf, BUFSIZE, 0);
-	//		if (Retval == SOCKET_ERROR)
-	//		{
-	//			err_display("recv()");
-	//			break;
-	//		}
-	//		else if (Retval == 0)
-	//		{
-	//			break;
-	//		}
-
-	//		Buf[Retval] = '\0';
-	//		printf("[TCP/%s : %d] %s\n", Addr, ntohs(ClientSockAddr.sin_port), Buf);
-
-	//		Retval = send(ClientSocket, Buf, Retval, 0);
-	//		if (Retval == SOCKET_ERROR)
-	//		{
-	//			err_display("send()");
-	//			break;
-	//		}
-	//	}
-
-	//	closesocket(ClientSocket);
-	//	printf("[TCP 서버] 클라이언트 종료 : IP 주소 = %s , 포트 번호 = %d\n", Addr, ntohs(ClientSockAddr.sin_port));
+	//	hThread = CreateThread(NULL, 0, ProcessClient, (LPVOID)ClientSocket, 0, NULL);
+	//	if (hThread == NULL) { closesocket(ClientSocket); }
+	//	else { CloseHandle(hThread); }
 	//}
+
+	char Buf[BUFSIZE + 1];
+
+	while (1)
+	{
+		AddrLen = sizeof(ClientSockAddr);
+		ClientSocket = accept(ServerSocket, (SOCKADDR*)&ClientSockAddr, &AddrLen);
+		if (ClientSocket == INVALID_SOCKET)
+		{
+			err_display("accept()");
+			break;
+		}
+
+		char Addr[INET_ADDRSTRLEN];
+		inet_ntop(AF_INET, &ClientSockAddr.sin_addr, Addr, sizeof(Addr));
+		printf("\n[TCP 서버] 클라이언트 접속: IP 주소 = %s, 포트 번호 = %d\n", Addr, ntohs(ClientSockAddr.sin_port));
+
+		while (1)
+		{
+
+			Retval = recv(ClientSocket, Buf, BUFSIZE, 0);
+			if (Retval == SOCKET_ERROR)
+			{
+				err_display("recv()");
+				break;
+			}
+			else if (Retval == 0)
+			{
+				break;
+			}
+
+			Buf[Retval] = '\0';
+			printf("[TCP/%s : %d] %s\n", Addr, ntohs(ClientSockAddr.sin_port), Buf);
+
+			Retval = send(ClientSocket, Buf, Retval, 0);
+			if (Retval == SOCKET_ERROR)
+			{
+				err_display("send()");
+				break;
+			}
+		}
+
+		closesocket(ClientSocket);
+		printf("[TCP 서버] 클라이언트 종료 : IP 주소 = %s , 포트 번호 = %d\n", Addr, ntohs(ClientSockAddr.sin_port));
+	}
 
 	closesocket(ServerSocket);
 

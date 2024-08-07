@@ -28,6 +28,26 @@ DECLARE_STATS_GROUP(TEXT("TCPSocketActor"), STATGROUP_TCPSocketActor, STATCAT_Ad
 DECLARE_CYCLE_STAT(TEXT("Send"), STAT_Send, STATGROUP_TCPSocketActor);
 DECLARE_CYCLE_STAT(TEXT("Recv"), STAT_Recv, STATGROUP_TCPSocketActor);
 
+USTRUCT(BlueprintType)
+struct FJsonBase
+{
+	GENERATED_BODY()
+
+public:
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "JsonData")
+	FString Name;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "JsonData")
+	FString Description;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "JsonData")
+	FString Color;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "JsonData")
+	int32 Number;
+};
+
 struct TCPWITHMYSQL_API FMessageHeader
 {
 	int32 Type;
@@ -78,6 +98,12 @@ protected:
 	FString Text = "";
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "TCP")
+	FJsonBase JsonData;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "TCP")
+	FString DataText = "";
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "TCP")
 	FString RecvText = "";
 
 	TSharedPtr<FInternetAddr> ClientAddress;
@@ -104,7 +130,15 @@ protected:
 	UFUNCTION(BlueprintCallable)
 	void SendText();
 
+	UFUNCTION(BlueprintCallable)
+	void SendDataText();
+
+	UFUNCTION(BlueprintCallable)
+	void SendPacket();
 	
+	UFUNCTION(BlueprintCallable)
+	void CreateDataText();
+
 	static TSharedPtr<FBufferArchive> CreatePacket(int32 InType, const uint8* InPayload, int32 InPayloadSize);
 
 	TSharedPtr<FBufferArchive> CreatePacket(int32 Type, const FString& SendText);
