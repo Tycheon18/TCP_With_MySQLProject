@@ -1,8 +1,9 @@
-
+#define _CRT_SECURE_NO_WARNINGS
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <iostream>
+#include <vector>
 
 #include <WinSock2.h>
 #include <WS2tcpip.h>
@@ -57,6 +58,51 @@ DWORD WINAPI ProcessClient(LPVOID arg)
 	printf("[TCP 서버] 클라이언트 종료 : IP 주소 = %s , 포트 번호 = %d\n", Addr, ntohs(ClientSockAddr.sin_port));
 
 	return 0;
+}
+
+void InterpretMessage(char* buffer, char* Addr, SOCKADDR_IN ClientSocket)
+{
+	string Temp = "";
+	string Messages;
+	char cmd = 0;
+
+	for (int i = 0; buffer[i] != '#'; i++)
+	{
+		if ((buffer[i] == '|' && (cmd == 0)))
+		{
+			cmd = Temp[0];
+			Temp = "";
+		}
+		else if ((buffer[i] == '|') && (cmd != 0))
+		{
+			Messages.append(Temp);
+			Temp = "";
+		}
+		else
+		{
+			Temp = Temp + buffer[i];
+		}
+	}
+
+	Messages = Messages + "\0";
+
+	if (cmd == 'C')
+	{
+		printf("[TCP/%s : %d] : Client Function Called!\n", Addr, ntohs(ClientSocket.sin_port));
+	}
+	else if (cmd == 'Q')
+	{
+
+	}
+
+	int Length = Messages.size();
+
+	char* Message = new char[Length];
+
+	strcpy(Message, Messages.c_str());
+
+	printf("[TCP/%s : %d] %s\n", Addr, ntohs(ClientSocket.sin_port), Message);
+
 }
 
 int main()
@@ -133,6 +179,7 @@ int main()
 		{
 
 			Retval = recv(ClientSocket, Buf, BUFSIZE, 0);
+
 			if (Retval == SOCKET_ERROR)
 			{
 				err_display("recv()");
@@ -143,8 +190,11 @@ int main()
 				break;
 			}
 
-			Buf[Retval] = '\0';
-			printf("[TCP/%s : %d] %s\n", Addr, ntohs(ClientSockAddr.sin_port), Buf);
+			//Buf[Retval] = '\0';
+
+			InterpretMessage(Buf, Addr, ClientSockAddr);
+
+			//printf("[TCP/%s : %d] %s\n", Addr, ntohs(ClientSockAddr.sin_port), Message);
 
 			Retval = send(ClientSocket, Buf, Retval, 0);
 			if (Retval == SOCKET_ERROR)

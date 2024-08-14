@@ -87,7 +87,7 @@ void ATCPConnector::SendText()
 	//ClientText = TCHAR_TO_UTF8(*Text);
 	if(Text != "")
 	{
-		FString Serial = "C" + Text;
+		FString Serial = "C|" + Text + "|#";
 
 		TCHAR* SerializedText = Serial.GetCharArray().GetData();
 
@@ -104,6 +104,18 @@ void ATCPConnector::SendText()
 		int32 BytesSent = 0;
 
 		ClientSocket->Send((uint8*)TCHAR_TO_UTF8(SerializedText), Size, BytesSent);
+
+		TArray<uint8> ReceivedData;
+		uint32 RecvSize = 0;
+
+		if(ClientSocket->HasPendingData(RecvSize))
+		{
+			ReceivedData.Init(0, RecvSize);
+			int32 Read = 0;
+			ClientSocket->Recv(ReceivedData.GetData(), ReceivedData.Num(), Read);
+
+			FString RecvMessage = FString(UTF8_TO_TCHAR(ReceivedData.GetData()));
+		}
 	}
 }
 
